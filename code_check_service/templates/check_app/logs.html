@@ -1,0 +1,34 @@
+{% extends 'index.html' %}
+
+{% block title %}Logs{% endblock %}
+
+{% block content %}
+<div class="main">
+    {% if log_list %}
+    <h4>Логи проверки</h4>
+    <p>файл: {{log_list.0.file.file|cut:"files/"|cut:user.email|cut:"/"}}<br/>создан: {{log_list.0.file.created_at}}</p>
+    <table>
+        <thead>
+        <tr>
+            <th>№</th>
+            <th>Дата</th>
+            <th>Результат проверки</th>
+            <th>Уведомление</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for log in log_list %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td> {{log.date}} </td>
+            <td>{{log.report}}</td>
+            <td>{% if log.is_send_notice %}Отправлено{% else %}Не отправлено{% endif %}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <h3>Пока нет логов проверки данного файла</h3>
+    {% endif %}
+</div>
+{% endblock %}

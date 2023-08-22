@@ -1,0 +1,99 @@
+version: "3.8"
+services:
+  django:
+    build: .
+    command: sh -c "
+      python manage.py makemigrations
+      && python manage.py migrate
+      && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/code_check_service
+      - ./static:/code_check_service/static
+      - ./media:/code_check_service/media
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15.1
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+  celery:
+    build: .
+    command: celery -A code_check_service worker --loglevel=info -P eventlet
+    volumes:
+      - .:/usr/src/worker
+    env_file:
+      - .env
+    restart: unless-stopped
+#    environment:
+#      # environment variables declared in the environment section override env_file
+#      - DEBUG=1
+#      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+#      - CELERY_BROKER=redis://redis:6379/0
+#      - CELERY_BACKEND=redis://redis:6379/0
+    depends_on:
+      - db
+      - redis
+      - django
+
+  celery_beat:
+    build: .
+    command: celery -A code_check_service beat -l info
+    volumes:
+      - .:/usr/src/beat
+    env_file:
+      - .env
+    restart: unless-stopped
+#    links:
+#      - db
+#      - redis
+    depends_on:
+      - db
+      - redis
+      - django
+      - celery
+
+  redis:
+    image: redis:latest
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-data:/var/lib/redis
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+#  web:
+#    build: .
+#    environment:
+#      - ASYNC_DATABASE_URL=postgresql+asyncpg://root:root@db/blogdb
+#      - HUNTER_API_KEY=3539893f0c37e371da06fb3f3de4346c3cbeba58
+#    volumes:
+#      - .:/code_check_service
+#    ports:
+#      - "8000:8000"
+#    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; alembic upgrade head && uvicorn blog_app:app --host 0.0.0.0 --reload'
+#    restart: always
+#    depends_on:
+#      - db
+#      - redis
+
+volumes:
+  postgres_data:
+  static:
+  media:

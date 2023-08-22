@@ -1,0 +1,13 @@
+{% extends 'index.html' %}
+
+{% block title %}Confirm{% endblock %}
+
+{% block content %}
+<div class="form">
+    <form method="post">
+        {% csrf_token %}
+        <h5>Вы уверены, что хотите удалить файл?</h5>
+        <input type="submit" value="Подтвердить" class="btn btn-dark">
+    </form>
+</div>
+{% endblock %}

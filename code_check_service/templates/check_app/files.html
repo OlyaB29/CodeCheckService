@@ -1,0 +1,42 @@
+{% extends 'index.html' %}
+
+{% block title %}Files{% endblock %}
+
+{% block content %}
+<div class="main">
+    {% if file_list %}
+    <h4>Список загруженных файлов</h4>
+    <table>
+        <thead>
+        <tr>
+            <th>№</th>
+            <th>Название файла</th>
+            <th>Описание</th>
+            <th>Обновлен</th>
+            <th>Статус</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for file in file_list %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>
+                {{file.file|cut:"files/"|cut:user.email|cut:"/"}}
+            </td>
+            <td>{{file.description}}</td>
+            <td>{{file.updated_at}}</td>
+            <td>{% if file.is_new %}Новый{% else %}<a
+                    href="{% url 'check_app:file-logs' file.id %}">Логи</a>{% endif %}
+            </td>
+            <td><a href="{% url 'check_app:update-file' file.id %}">Изменить</a> <a
+                    href="{% url 'check_app:delete-file' file.id %}">..........🗑️</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <h3>У вас пока нет загруженных файлов</h3>
+    {% endif %}
+</div>
+{% endblock %}

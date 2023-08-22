@@ -1,0 +1,21 @@
+{% extends 'index.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="main">
+    {% if user.is_authenticated %}
+    <h5>Загрузите свой файл с кодом на python.<br/> После проверки качества кода на ваш email придет отчет с
+        результатами.</h5>
+    <form method="post" enctype="multipart/form-data" class="file-upload">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button type="submit" class="btn btn-dark">Отправить</button>
+    </form>
+    {% else %}
+    <h4>Для использования сервиса войдите в систему или зарегистрируйтесь</h4>
+    <a href="{% url 'login' %}">Войти</a> |
+    <a href="{% url 'check_app:sign-up' %}">Регистрация</a>
+</div>
+{% endif %}
+{% endblock %}

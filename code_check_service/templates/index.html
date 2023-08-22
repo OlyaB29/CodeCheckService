@@ -1,0 +1,37 @@
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block tittle %} Проверка кода {% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<div class="d-flex flex-column flex-md-row align-items-center" id="top">
+    <img src="static/img/img.png" alt="" width="50" height="42" class="me-2" role="img">
+    <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
+        {% if user.is_authenticated %}
+        <a class="me-3 py-2 text-decoration-none" href="{% url 'check_app:home' %}">Добавить файл</a>
+        <a class="me-3 py-2 text-decoration-none" href="{% url 'check_app:files' %}">Файлы</a>
+        <a class="me-3 py-2 text-decoration-none" href="{% url 'logout' %}">Выйти</a>
+        <span class="py-2">{{user.email}}</span>
+        {% else %}
+        <a class="me-3 py-2 text-decoration-none" href="{% url 'login' %}">Войти</a>
+        <a class="py-2 text-decoration-none" href="{% url 'check_app:sign-up' %}">Регистрация</a>
+        {% endif %}
+    </nav>
+</div>
+
+<header>
+    <div class="header">
+        Вас приветствует
+        <p class="first"><a href="{% url 'check_app:home' %}">сервис проверки кода</a></p>
+        <p class="second"> Python</p>
+    </div>
+</header>
+<body>
+{% block content %}{% endblock %}
+</body>
+<footer>
+    Все права защищены &copy;
+</footer>
+</html>

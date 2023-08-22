@@ -1,0 +1,17 @@
+{% extends 'index.html' %}
+
+{% block title %}Update File{% endblock %}
+
+{% block content %}
+<div class="main">
+    <h5><b>Обновление файла: {{file.file|cut:"files/"|cut:user.email|cut:"/"}}</b></h5>
+    <form method="post" enctype="multipart/form-data" class="file-upload">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="d-grid gap-2 d-md-block mt-2">
+            <button type="submit" class="btn btn-dark">Обновить файл</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

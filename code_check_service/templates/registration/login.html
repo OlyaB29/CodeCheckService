@@ -1,0 +1,14 @@
+{% extends 'index.html' %}
+
+{% block title %}Log In{% endblock %}
+
+{% block content %}
+<div class="form">
+<h3>Авторизуйтесь, пожалуйста</h3>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-dark">Войти</button>
+</form>
+</div>
+{% endblock %}
